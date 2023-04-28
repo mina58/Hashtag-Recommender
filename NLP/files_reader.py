@@ -6,6 +6,11 @@ UK_tweets_file = '../Data/UKTweets.csv'
 CAN_tweets_file = '../Data/CANTweets.csv'
 IR_tweets_file = '../Data/IRTweets.csv'
 AUS_tweets_file = '../Data/AUSTweets.csv'
+new_US_file = '../NewData/USTweets.csv'
+new_UK_file = '../NewData/UKTweets.csv'
+new_CAN_file = '../NewData/CANTweets.csv'
+new_IR_file = '../NewData/IRTweets.csv'
+new_AUS_file = '../NewData/AUSTweets.csv'
 
 
 class filesReader:
