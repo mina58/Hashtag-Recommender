@@ -1,3 +1,4 @@
 /variables.env
 /NLP/Embeddings/glove.840B.300d/
 /NLP/Embeddings/embeddings_index_object.pkl
+.env
