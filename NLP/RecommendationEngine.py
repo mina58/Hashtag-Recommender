@@ -109,4 +109,6 @@ class RecommendationEngine:
         
         return sorted(hashtags, key=lambda x: x[1])
     
+engine = RecommendationEngine([new_US_file, new_UK_file, new_SA_file, new_AUS_file, new_CAN_file], 20)
 
+print(engine.recommend_hashtags("chess final"))
