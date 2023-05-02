@@ -11,6 +11,8 @@ new_UK_file = '../NewData/UKTweets.csv'
 new_CAN_file = '../NewData/CANTweets.csv'
 new_IR_file = '../NewData/IRTweets.csv'
 new_AUS_file = '../NewData/AUSTweets.csv'
+new_SA_file = '../NewData/SATweets.csv'
+new_SINGA_file = '../NewData/SINGAPORETweets.csv'
 
 
 class filesReader:
