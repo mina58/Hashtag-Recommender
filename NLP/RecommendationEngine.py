@@ -57,6 +57,7 @@ class RecommendationEngine:
         #step 2.b, 2.c
         for trend, hashtag_list in zip(trends, hashtag_lists):
             for hashtag in hashtag_list:
+                hashtag = hashtag.lower()
                 if trend not in self.__trends_to_hashtags:
                     self.__trends_to_hashtags[trend] = {}
                     self.__trends_to_hashtags[trend][hashtag] = 1
@@ -97,18 +98,22 @@ class RecommendationEngine:
         """
         trends = self.__predict_trend(tweet)
 
-        hashtags = []
+        hashtags = {}
 
         for trend, probability in trends:
             hashtags_count = 0
             trend_hashtags = sorted(self.__trends_to_hashtags[trend].items(), key=lambda x: x[1])
-            for hashtag in trend_hashtags:
-                hashtags_count += hashtag[1]
             for hashtag in trend_hashtags[-3:]:
-                hashtags.append((hashtag[0], (hashtag[1]/hashtags_count) * probability))
+                hashtags_count += hashtag[1]
+            for hashtag, count in trend_hashtags[-3:]:
+                if hashtag in hashtags:
+                    hashtags[hashtag] += probability * count/hashtags_count
+                else:
+                    hashtags[hashtag] = probability * count/hashtags_count
         
+        hashtags = [(hashtag, probability) for hashtag, probability in hashtags.items()]
         return sorted(hashtags, key=lambda x: x[1])
     
-engine = RecommendationEngine([new_US_file, new_UK_file, new_SA_file, new_AUS_file, new_CAN_file], 20)
+engine = RecommendationEngine([new_US_file, new_UK_file, new_AUS_file, new_CAN_file, new_IR_file], 15)
 
-print(engine.recommend_hashtags("chess final"))
+print(engine.recommend_hashtags("deja vu, i have seen this place before"))
