@@ -12,7 +12,6 @@
 
 #Libraries Needed
 import tweepy
-import csv
 import pandas as pd
 import re
 import preprocessor as p
@@ -54,23 +53,19 @@ UKFile = r"..\NewData\UKTweets.csv"
 AUSFile = r"..\NewData\AUSTweets.csv"
 CANFile = r"..\NewData\CANTweets.csv"
 IRFile = r"..\NewData\IRTweets.csv"
-SINGAPOREFile = r"..\NewData\SINGAPORETweets.csv"
-SAFIle = r"..\NewData\SATweets.csv"
 #Total Files
 tUSFile = r"..\Data\USTweets.csv"
 tUKFile = r"..\Data\UKTweets.csv"
 tAUSFile = r"..\Data\AUSTweets.csv"
 tCANFile = r"..\Data\CANTweets.csv"
 tIRFile = r"..\Data\IRTweets.csv"
-tSINGAPOREFile = r"..\Data\SINGAPORETweets.csv"
-tSAFIle = r"..\Data\SATweets.csv"
 #columns of the csv file
 COLS = ['id', 'created_at', 'source', 'original_text','clean_text','favorite_count',
         'retweet_count', 'hashtags','trend']
 
 
 # Resetting the New Files to include only New Tweets
-for old in [USFile , UKFile , AUSFile , CANFile , IRFile , SINGAPOREFile , SAFIle]:
+for old in [USFile , UKFile , AUSFile , CANFile , IRFile , ]:
     df = pd.read_csv(old, header=None)
     df.head(1).to_csv(old, index=False, header=False)
 
@@ -156,7 +151,7 @@ def save_tweets(topic, totalFile, newFile):
 #Getting Trending Topics according to the Place ID
 def get_trends_and_tweets(place_id , id):
     trends = api.get_place_trends(id = place_id)
-    for i in range(12):
+    for i in range(10):
        if id == 1:
            save_tweets(trends[0]['trends'][i]['name'] , tUSFile , USFile)
        elif id == 2:
@@ -167,10 +162,7 @@ def get_trends_and_tweets(place_id , id):
            save_tweets(trends[0]['trends'][i]['name'] , tAUSFile , AUSFile)
        elif id == 5:
            save_tweets(trends[0]['trends'][i]['name'] , tIRFile , IRFile)
-       elif id == 6:
-           save_tweets(trends[0]['trends'][i]['name'] , tSINGAPOREFile, SINGAPOREFile)
-       else:
-           save_tweets(trends[0]['trends'][i]['name'] , tSAFIle , SAFIle)
+
 
 # Twitter identifies locations using the Yahoo! Where On Earth ID.
 US_WOE_ID = 23424977
@@ -178,20 +170,19 @@ UK_WOE_ID = 23424975
 Canada_WOE_ID = 23424775
 AUS_WOE_ID = 23424748
 IR_WOE_ID = 23424803
-SINGAPORE_WOE_ID = 23424948
-SA_WOE_ID = 23424942
+
+
 get_trends_and_tweets(US_WOE_ID , 1)
 get_trends_and_tweets(UK_WOE_ID , 2)
 get_trends_and_tweets(Canada_WOE_ID , 3)
 get_trends_and_tweets(AUS_WOE_ID , 4)
 get_trends_and_tweets(IR_WOE_ID , 5)
-get_trends_and_tweets(SINGAPORE_WOE_ID , 6)
-get_trends_and_tweets(SA_WOE_ID , 7)
+
 
 
 #Removing Duplicates and Shuffling Rows in CSV File
 #When we want to scrap more tweets in the csv file , this could result in adding tweets we already got days ago.
-files = [USFile, UKFile, CANFile, AUSFile, IRFile , SAFIle ,SINGAPOREFile , tSAFIle , tSINGAPOREFile , tIRFile ,
+files = [USFile, UKFile, CANFile, AUSFile, IRFile , tIRFile ,
          tUKFile , tUSFile , tCANFile , tAUSFile]
 for file in files:
     df = pd.read_csv(file)
