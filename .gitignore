@@ -1,1 +1,10 @@
 /variables.env
+/NLP/Embeddings/glove.840B.300d/
+/NLP/Embeddings/embeddings_index_object.pkl
+.env
+/__pycache__/
+/.vscode/
+/NLP/trends_classifier/
+/NLP/parameters_tuning/
+/NLP/__pycache__/
+NLP/__pycache__/files_reader.cpython-310.pyc
