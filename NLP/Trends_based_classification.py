@@ -7,6 +7,7 @@ from keras.utils import pad_sequences
 from keras.utils import to_categorical
 import tensorflow as tf
 import pickle
+from time import ctime
 
 
 #Get the data
@@ -95,10 +96,10 @@ trends_classifier = tf.keras.Sequential([
         embeddings_initializer=initializers.Constant(embeddings_matrix),
         trainable=True
     ),
-    tf.keras.layers.Conv1D(conv_filters, conv_kernel_size),
+    tf.keras.layers.Conv1D(conv_filters, conv_kernel_size, activation='relu'),
     tf.keras.layers.AveragePooling1D(),
     tf.keras.layers.Dropout(dropout_value),
-    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_units)),
+    tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(lstm_units, activation='tanh')),
     tf.keras.layers.Dropout(dropout_value),
     tf.keras.layers.Dense(no_of_trends, activation='softmax')
 ])
@@ -111,8 +112,8 @@ trends_classifier.compile(
 
 
 #Train the model
-epochs = 4
-trends_classifier.fit(train_data, train_labels, epochs=epochs, validation_data=(test_data, test_labels))
+epochs = 5
+history = trends_classifier.fit(train_data, train_labels, epochs=epochs, validation_data=(test_data, test_labels))
 
 
 #Save the model
@@ -122,5 +123,6 @@ with open('./trends_classifier/inv_trends_map.pkl', 'wb') as output:
 with open('./trends_classifier/tweet_tokenizer.pkl', 'wb') as output:
     pickle.dump(tweets_tokenizer, output)
 
-
+with open('./model_report.txt', 'a') as output:
+    output.write(f"{ctime()}: {history.history['val_accuracy']}, trained on {len(tweets)} tweets, {no_of_trends} trends")
 
