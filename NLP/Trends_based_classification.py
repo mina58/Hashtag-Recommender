@@ -124,5 +124,5 @@ with open('./trends_classifier/tweet_tokenizer.pkl', 'wb') as output:
     pickle.dump(tweets_tokenizer, output)
 
 with open('./model_report.txt', 'a') as output:
-    output.write(f"{ctime()}: {history.history['val_accuracy']}, trained on {len(tweets)} tweets, {no_of_trends} trends")
+    output.write(f"{ctime()}: {history.history['val_accuracy']}, trained on {len(tweets)} tweets, {no_of_trends} trends\n")
 

@@ -64,7 +64,7 @@ COLS = ['id', 'created_at', 'source', 'original_text','clean_text','favorite_cou
         'retweet_count', 'hashtags','trend']
 
 
-# Resetting the New Files to include only New Tweets
+# # Resetting the New Files to include only New Tweets
 for old in [USFile , UKFile , AUSFile , CANFile , IRFile , ]:
     df = pd.read_csv(old, header=None)
     df.head(1).to_csv(old, index=False, header=False)
