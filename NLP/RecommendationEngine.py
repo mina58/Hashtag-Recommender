@@ -1,14 +1,16 @@
 import tensorflow as tf
-from files_reader import *
+from .files_reader import *
 import numpy as np
 from keras.utils import pad_sequences
 from keras.preprocessing.text import Tokenizer
 import pickle
+from functools import reduce
+from NLP.lemmatizer_and_stemmer import LemmatizerAndStemmer
 
 
-model_file_path = "./trends_classifier/trends_classifier_model.h5"
-tokenizer_file_path = "./trends_classifier/tweet_tokenizer.pkl"
-index_to_trend_map_path = "./trends_classifier/inv_trends_map.pkl"
+model_file_path = "./NLP/trends_classifier/trends_classifier_model.h5"
+tokenizer_file_path = "./NLP/trends_classifier/tweet_tokenizer.pkl"
+index_to_trend_map_path = "./NLP/trends_classifier/inv_trends_map.pkl"
 
 
 class RecommendationEngine:
@@ -32,6 +34,8 @@ class RecommendationEngine:
                 2.a read the data of all the passed files using the file reader.
                 2.b iterate over the rows in the data. Each row contains 1 trend and a list of hashtags used in the tweet.
                 3.c add the hashtag to the trend in the trends to hashtags, or increment the hashtag if the hashtag already exists.
+            3. finally we need to get the top trending hashtags and trends to we just count the frequency of each trend and hashtag
+            and make a sorted list of the frequencies and get the most common 10.
         """
         #Step 1.a
         self.__model = tf.keras.models.load_model(model_file_path)
@@ -65,6 +69,15 @@ class RecommendationEngine:
                     self.__trends_to_hashtags[trend][hashtag] = 1
                 else:
                     self.__trends_to_hashtags[trend][hashtag] += 1
+                    
+        unique_trends, trends_frequency = np.unique(trends, return_counts=True)
+        sorted_trends_indices = np.argsort(trends_frequency)[::-1]
+        self.__sorted_trends = unique_trends[sorted_trends_indices]
+        
+        all_hashtags = reduce(lambda x, y: x + y, hashtag_lists)
+        unique_hashtags, hashtags_frequency = np.unique(all_hashtags, return_counts=True)
+        sorted_hashtags_indices = np.argsort(hashtags_frequency)[::-1]
+        self.__sorted_hashtags = unique_hashtags[sorted_hashtags_indices]
         
 
     def __tweet_to_padded_sequence(self, tweet: str) -> list:
@@ -96,6 +109,7 @@ class RecommendationEngine:
                 N: the total number of hashtags used in this trend.
                 T: the predicted probability of the model for the trend.
         """
+        tweet = LemmatizerAndStemmer.stem_and_lemmatize_tweet(tweet)
         trends = self.__predict_trend(tweet)
 
         hashtags = {}
@@ -112,8 +126,20 @@ class RecommendationEngine:
                     hashtags[hashtag] = probability * count/hashtags_count
         
         hashtags = [(hashtag, probability) for hashtag, probability in hashtags.items()]
-        return sorted(hashtags, key=lambda x: x[1])
+        returned_list =  sorted(hashtags, key=lambda x: x[1])
+        returned_list.reverse()
+        return returned_list
     
-engine = RecommendationEngine([new_US_file, new_UK_file, new_AUS_file, new_CAN_file, new_IR_file], 15)
-
-print(engine.recommend_hashtags("deja vu, i have seen this place before"))
+    
+    def get_top_trends(self) -> list:
+        """
+        This function returns the top trends in the current dataset.
+        """
+        return self.__sorted_trends[:10]
+    
+    
+    def get_top_hashtags(self) -> list:
+        """
+        This function returns the top hashtags in the current dataset.
+        """
+        return self.__sorted_hashtags[:10]

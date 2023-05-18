@@ -1,18 +1,21 @@
 import csv
 import random
 
-US_tweets_file = '../Data/USTweets.csv'
-UK_tweets_file = '../Data/UKTweets.csv'
-CAN_tweets_file = '../Data/CANTweets.csv'
-IR_tweets_file = '../Data/IRTweets.csv'
-AUS_tweets_file = '../Data/AUSTweets.csv'
-new_US_file = '../NewData/USTweets.csv'
-new_UK_file = '../NewData/UKTweets.csv'
-new_CAN_file = '../NewData/CANTweets.csv'
-new_IR_file = '../NewData/IRTweets.csv'
-new_AUS_file = '../NewData/AUSTweets.csv'
-new_SA_file = '../NewData/SATweets.csv'
-new_SINGA_file = '../NewData/SINGAPORETweets.csv'
+
+files_directory_prefix = ''
+
+US_tweets_file = files_directory_prefix + 'Data/USTweets.csv'
+UK_tweets_file = files_directory_prefix + 'Data/UKTweets.csv'
+CAN_tweets_file = files_directory_prefix + 'Data/CANTweets.csv'
+IR_tweets_file = files_directory_prefix + 'Data/IRTweets.csv'
+AUS_tweets_file = files_directory_prefix + 'Data/AUSTweets.csv'
+new_US_file = files_directory_prefix + 'NewData/USTweets.csv'
+new_UK_file = files_directory_prefix + 'NewData/UKTweets.csv'
+new_CAN_file = files_directory_prefix + 'NewData/CANTweets.csv'
+new_IR_file = files_directory_prefix + 'NewData/IRTweets.csv'
+new_AUS_file = files_directory_prefix + 'NewData/AUSTweets.csv'
+new_SA_file = files_directory_prefix + 'NewData/SATweets.csv'
+new_SINGA_file = files_directory_prefix + 'NewData/SINGAPORETweets.csv'
 
 
 class FilesReader:
