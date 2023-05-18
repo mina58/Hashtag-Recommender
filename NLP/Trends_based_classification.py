@@ -8,6 +8,7 @@ from keras.utils import to_categorical
 import tensorflow as tf
 import pickle
 from time import ctime
+from lemmatizer_and_stemmer import LemmatizerAndStemmer
 
 
 #Get the data
@@ -25,11 +26,14 @@ random.shuffle(tweets_and_trends)
 
 tweets, trends = FilesReader.split_tweets_and_trends(tweets_and_trends)
 
+for i, tweet in enumerate(tweets):
+    processed_tweet = LemmatizerAndStemmer.stem_and_lemmatize_tweet(tweet)
+    tweets[i] = processed_tweet
+
 tweets_tokenizer = Tokenizer(oov_token="<OOV>")
 tweets_tokenizer.fit_on_texts(tweets)
 tweets_word_index = tweets_tokenizer.word_index
 tweets_index_word = tweets_tokenizer.index_word
-
 
 #Create the padded sequences
 sequence_length = 15
@@ -63,7 +67,7 @@ encoded_trends = to_categorical(trends_sequences)
 #Prepare the pre-trained embeddings
 from Embeddings.embeddings_matrix import get_embeddings_matrix
 
-embeddings_index_path = "./Embeddings/embeddings_index_object.pkl"
+embeddings_index_path = "./NLP/Embeddings/embeddings_index_object.pkl"
 embeddings_matrix, hits, misses = get_embeddings_matrix(tweets_word_index, embeddings_index_path)
 
 
@@ -112,17 +116,17 @@ trends_classifier.compile(
 
 
 #Train the model
-epochs = 5
+epochs = 4
 history = trends_classifier.fit(train_data, train_labels, epochs=epochs, validation_data=(test_data, test_labels))
 
 
 #Save the model
-trends_classifier.save("./trends_classifier/trends_classifier_model.h5")
-with open('./trends_classifier/inv_trends_map.pkl', 'wb') as output:
+trends_classifier.save("./NLP/trends_classifier/trends_classifier_model.h5")
+with open('./NLP/trends_classifier/inv_trends_map.pkl', 'wb') as output:
     pickle.dump(inv_trends_map, output)
-with open('./trends_classifier/tweet_tokenizer.pkl', 'wb') as output:
+with open('./NLP/trends_classifier/tweet_tokenizer.pkl', 'wb') as output:
     pickle.dump(tweets_tokenizer, output)
 
-with open('./model_report.txt', 'a') as output:
+with open('./NLP/model_report.txt', 'a') as output:
     output.write(f"{ctime()}: {history.history['val_accuracy']}, trained on {len(tweets)} tweets, {no_of_trends} trends\n")
 

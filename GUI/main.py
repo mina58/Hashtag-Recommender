@@ -1,13 +1,24 @@
-hastags = [("hashag1", 0.5), ("hashtag2", 0.4), ("hashtag4", 0.4), ("hashtag5", 0.5), ("hashtag6", 0.2),
-           ("hastag7", 0.6), ("hastg10", 0.7), ("Hashtag11", 0.9), ("Hashtag12", 0.9), ("Hashtag14", 0.4)]
+import sys
+sys.path.append(sys.path[0] + "\\..\\")
+
+from NLP.RecommendationEngine import RecommendationEngine
+from NLP.files_reader import *
+
+data_files = [new_US_file, new_UK_file, new_AUS_file, new_CAN_file, new_IR_file]
+engine = RecommendationEngine(data_files, 15)
+top_trends = engine.get_top_trends()
+top_hashtags = engine.get_top_hashtags()
 
 
 def recommend():
+    tweet = tweet_text.get("1.0", "end-1c")
+    print(tweet)
+    hashtags = engine.recommend_hashtags(tweet)
     hashtag_box.delete(0, END)
     confidence_box.delete(0, END)
-    for i in range(len(hastags)):
-        hashtag_box.insert(i, hastags[i][0])
-        confidence_box.insert(i, hastags[i][1])
+    for i in range(len(hashtags)):
+        hashtag_box.insert(i, hashtags[i][0])
+        confidence_box.insert(i, hashtags[i][1])
         hashtag_box.config(fg=labelFont)
         confidence_box.config(fg=labelFont)
 
@@ -44,17 +55,12 @@ confidence_label = Label(window, text="Confidence: ", font=("Helvetica", 20, "bo
 confidence_label.grid(row=3, column=1, padx=9, pady=9, columnspan=2, sticky='w')
 confidence_box = Listbox(window, width=25, font="Arial", bg=textarea, borderwidth=0)
 confidence_box.grid(row=4, column=1, padx=9, pady=9, sticky='nw')
-# scrollbar.grid(row=2,column=1)
-
-# hastags =[("hashatagi"),("hashtagak"),("hashtagna"),("hashtaghom"),("hashtaghom"),("hastagz"),("hastgashh"),("YARABBBB"),("HJJDHJDHFSKFGK"),("sarafadejew")]
-# confidence =[0.5,0.5,0.6,0.1,0.7,0.1,0.6,0.9,0.2,0.1]
 # for i in range(len(hastags)):
 #     hashtag_box.insert(i,hastags[i])
 # for index in range(len(confidence)):
 #     confidence_box.insert(index,confidence[index])
 # canvas = Canvas(window, height=1500, width=1500)
 # canvas.create_line(700,0,1500,1500,fill ="pink",width=6)
-
 
 toptrends_label = tkinter.Label(window, text="Top Trends:", font=title_font, fg=labelFont, bg=background)
 toptrends_label.grid(row=0, column=10, padx=9, pady=9, columnspan=5, sticky='w')
@@ -64,6 +70,15 @@ toptrendsH_label = tkinter.Label(window, text="Top  Hashtags: ", font=title_font
 toptrendsH_label.grid(row=3, column=10, padx=9, pady=9, columnspan=5, sticky='w')
 toptrendH_box = Listbox(window, width=25, font="Constantia", bg=textarea, borderwidth=0)
 toptrendH_box.grid(row=4, column=10, padx=9, pady=9, sticky='nw')
+
+
+for i in range(10):
+    toptrends_box.insert(i, top_trends[i])
+    toptrendH_box.insert(i, '#' + top_hashtags[i])
+    toptrends_box.config(fg=labelFont)
+    toptrendH_box.config(fg=labelFont)
+
+
 
 # canvas.grid()
 # scrollbar.config(command=hashtag_box.yview())
