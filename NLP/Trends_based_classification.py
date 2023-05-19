@@ -1,14 +1,17 @@
 from keras import initializers
 import tensorflow as tf
 from files_reader import *
-import tensorflow as tf
 from keras.preprocessing.text import Tokenizer
 from keras.utils import pad_sequences
 from keras.utils import to_categorical
-import tensorflow as tf
 import pickle
 from time import ctime
 from lemmatizer_and_stemmer import LemmatizerAndStemmer
+import numpy as np
+from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report
+import pandas as pd
 
 
 #Get the data
@@ -127,6 +130,52 @@ with open('./NLP/trends_classifier/inv_trends_map.pkl', 'wb') as output:
 with open('./NLP/trends_classifier/tweet_tokenizer.pkl', 'wb') as output:
     pickle.dump(tweets_tokenizer, output)
 
-with open('./NLP/model_report.txt', 'a') as output:
-    output.write(f"{ctime()}: {history.history['val_accuracy']}, trained on {len(tweets)} tweets, {no_of_trends} trends\n")
 
+#Create the confusion matrix
+predictions = trends_classifier.predict(test_data)
+predicted_trends = np.argmax(predictions, axis=1)
+true_trends = np.argmax(test_labels, axis=1)
+
+confusion_matrix = confusion_matrix(true_trends, predicted_trends)
+
+
+#Create model report
+trends_names = [trend[0] for trend in trends_map.items()]
+
+fig, ax = plt.subplots(figsize=(20, 20))
+
+im = ax.imshow(confusion_matrix, interpolation='nearest', cmap=plt.cm.Blues)
+ax.set_title(ctime())
+plt.colorbar(im, ax=ax)
+
+tick_marks = np.arange(len(trends_names))
+plt.xticks(tick_marks, trends_names, rotation=90)
+plt.yticks(tick_marks, trends_names)
+
+thresh = confusion_matrix.max() / 2.0
+for i, j in np.ndindex(confusion_matrix.shape):
+    ax.text(j, i, format(confusion_matrix[i, j], 'd'),
+            horizontalalignment="center",
+            color="white" if confusion_matrix[i, j] > thresh else "black")
+
+plt.ylabel('True trend')
+plt.xlabel('Predicted trend')
+
+plt.savefig('./NLP/Model_reports/plots/' + ctime().replace(' ', '_').replace(':', '_') + '.png', dpi=300)
+
+report = classification_report(true_trends, predicted_trends, target_names=trends_names,  output_dict=True)
+
+report_data_frame_dict = {
+    'time': [ctime()],
+    'accuracy' : [report['accuracy']],
+    'precision' : [report['weighted avg']['precision']],
+    'recall' : [report['weighted avg']['recall']],
+    'f1_score' : [report['weighted avg']['f1-score']],
+    'loss' : [history.history['loss'][-1]],
+    'number of tweets' : [len(tweets)],
+    'number of trends' : [no_of_trends]
+}
+
+report_data_frame = pd.DataFrame(report_data_frame_dict)
+
+report_data_frame.to_csv('./NLP/Model_reports/model_report.csv', mode='a', index=False,  header=False)

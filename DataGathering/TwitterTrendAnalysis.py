@@ -123,7 +123,7 @@ def clean_tweets(tweet):
 def save_tweets(topic, totalFile, newFile):
     header = not os.path.exists(totalFile)
     df_final = pd.DataFrame(columns=COLS)
-    for tweet in tweepy.Cursor(api.search_tweets, q=topic, lang='en', count=5000).items(5000):
+    for tweet in tweepy.Cursor(api.search_tweets, q=topic, lang='en', count=10000).items(10000):
         statuses = [tweet]
         for status in statuses:
             parsedData = []
