@@ -61,6 +61,8 @@ class RecommendationEngine:
         #step 2.b, 2.c
         for trend, hashtag_list in zip(trends, hashtag_lists):
             for hashtag in hashtag_list:
+                if hashtag == '':
+                    continue
                 hashtag = hashtag.lower()
                 if trend not in self.__trends_to_hashtags:
                     self.__trends_to_hashtags[trend] = {}
@@ -78,6 +80,7 @@ class RecommendationEngine:
         unique_hashtags, hashtags_frequency = np.unique(all_hashtags, return_counts=True)
         sorted_hashtags_indices = np.argsort(hashtags_frequency)[::-1]
         self.__sorted_hashtags = unique_hashtags[sorted_hashtags_indices]
+        self.__sorted_hashtags = [hashtag for hashtag in self.__sorted_hashtags if hashtag != '']
         
 
     def __tweet_to_padded_sequence(self, tweet: str) -> list:

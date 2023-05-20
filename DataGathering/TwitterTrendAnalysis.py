@@ -135,8 +135,6 @@ def save_tweets(topic, totalFile, newFile):
               status.source, status.text, filtered_tweet,
               status.favorite_count, status.retweet_count]
             hashtags = ", ".join([hashtag_item['text'] for hashtag_item in status.entities['hashtags']])
-            if not len(hashtags):
-                continue # neglect tweets with no hashtags allocated
             hashtags = re.sub('#','',hashtags)
             topic = re.sub('#','',topic)
             parsedData.append(hashtags) #append the hashtags

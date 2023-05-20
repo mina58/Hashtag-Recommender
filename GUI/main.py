@@ -73,10 +73,12 @@ toptrendH_box.grid(row=4, column=10, padx=9, pady=9, sticky='nw')
 
 
 for i in range(10):
-    toptrends_box.insert(i, top_trends[i])
-    toptrendH_box.insert(i, '#' + top_hashtags[i])
-    toptrends_box.config(fg=labelFont)
-    toptrendH_box.config(fg=labelFont)
+    if i < len(top_trends):
+        toptrends_box.insert(i, top_trends[i])
+        toptrends_box.config(fg=labelFont)
+    if i < len(top_hashtags):
+        toptrendH_box.insert(i, '#' + top_hashtags[i])
+        toptrendH_box.config(fg=labelFont)
 
 
 
